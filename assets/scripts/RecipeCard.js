@@ -1,7 +1,8 @@
 class RecipeCard extends HTMLElement {
   constructor() {
     // Part 1 Expose - TODO
-
+    super();
+    this.attachShadow({mode: 'open'});
     // You'll want to attach the shadow DOM here
   }
 
@@ -100,6 +101,68 @@ class RecipeCard extends HTMLElement {
     // created in the constructor()
 
     // Part 1 Expose - TODO
+    
+    let recipePic = document.createElement("img");
+    recipePic.setAttribute("src", searchForKey(data, "thumbnailUrl"));
+    recipePic.setAttribute("alt", 'Recipe Title');
+    
+    
+
+    let titleElem = document.createElement("p");
+    let link = document.createElement("a");
+    link.setAttribute("href", getUrl(data));
+    link.innerHTML = searchForKey(data, "headline");
+    titleElem.setAttribute("class", "title");
+    titleElem.appendChild(link);
+    
+
+    let currRating = searchForKey(data, "ratingValue");
+    let currCount = searchForKey(data, "ratingCount");
+
+    let rating = document.createElement("div");
+    let score = document.createElement("span");
+    rating.setAttribute("class", "rating");
+    rating.appendChild(score);
+
+    if (currRating > 0){
+      let count = document.createElement("span");
+      let stars = document.createElement("img");
+      let starVal = Math.round(currRating);
+
+      stars.setAttribute("src", `assets/images/icons/${starVal}-star.svg`);
+
+      score.innerHTML = currRating;
+      count.innerHTML = `(${currCount})`;
+
+      rating.appendChild(stars);
+      rating.appendChild(count);
+    }
+    else{
+      score.innerHTML = "No Reviews Yet";
+    }
+
+    let org = document.createElement("div");
+    org.setAttribute("class", "organization");
+    org.innerHTML = getOrganization(data);
+
+
+    let ingredients = document.createElement("p");
+    ingredients.setAttribute("class", "ingredients");
+    ingredients.innerHTML = createIngredientList(searchForKey(data, "recipeIngredient"));
+
+
+    let time = document.createElement("time");
+    time.innerHTML = convertTime(searchForKey(data, "totalTime"));
+
+    card.appendChild(recipePic);
+    card.appendChild(titleElem);
+    card.append(org);
+    card.append(rating);
+    card.append(time);
+    card.append(ingredients);
+
+    this.shadowRoot.appendChild(styleElem);
+    this.shadowRoot.appendChild(card);
   }
 }
 
